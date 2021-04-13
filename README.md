@@ -5,8 +5,9 @@ Public repot for files related to Azure DevOps Videos
 Files used for Azure DevOps and Image Builder
 https://youtu.be/zL0eLEl2BxI
 
-
-
+# Session Host Pipeline
+Files used to deploy Session Hosts with Azure Devops
+https://youtu.be/bZy6Yay0ybM
 
 
 
