@@ -1,0 +1,88 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "nestedTemplatesLocation": {
+            "value": "https://raw.githubusercontent.com/Azure/RDS-Templates/master/ARM-wvd-templates/nestedtemplates/"
+        },
+        "artifactsLocation": {
+            "value": "https://raw.githubusercontent.com/Azure/RDS-Templates/master/ARM-wvd-templates/DSC/Configuration.zip"
+        },
+        "tags": {
+            "value": {
+                "Environment": "Lab",
+                "Owner": "IT"
+            }
+        },
+        "hostpoolName": {
+            "value": "<HostPoolName>"
+        },
+        "hostpoolToken": {
+            "value": "<HostPoolToken>"
+        },
+        "administratorAccountUsername": {
+            "value": "<DomainJoinAccount>"
+        },
+        "administratorAccountPassword": {
+            "reference": {
+                "keyVault": {
+                  "id": "<KeyVaultURI>"
+                },
+                "secretName": "<DomainAddSecret>"
+              }
+        },
+        "vmAdministratorAccountUsername": {
+            "value": "<LocalAdmin>"
+        },
+        "vmAdministratorAccountPassword": {
+            "reference": {
+                "keyVault": {
+                  "id": "<KeyVaultURI>"
+                },
+                "secretName": "<LocalAdminSecret>"
+              }
+        },
+        "vmSize": {
+            "value": "<VMSize>"
+        },
+        "vmInitialNumber": {
+            "value": 1
+        },
+        "vmNumberOfInstances": {
+            "value": 3
+        },
+        "vmNamePrefix": {
+            "value": "<VMPrefix>"
+        },
+        "vmImageType": {
+            "value": "CustomImage"
+        },
+        "vmCustomImageSourceId": {
+            "value": "<SIGURI>"
+        },
+        "vmDiskType": {
+            "value": "<DiskType>"
+        },
+        "existingVnetName": {
+            "value": "<VNetName>"
+        },
+        "existingSubnetName": {
+            "value": "<SHSubnet>"
+        },
+        "virtualNetworkResourceGroupName": {
+            "value": "<VNetRG>"
+        },
+        "ouPath": {
+            "value": "<OUPath>"
+        },
+        "domain": {
+            "value": "<DomainName>"
+        },
+        "workspaceId": {
+            "value": "<WorkspaceID>"
+        },
+        "workspaceKey": {
+            "value": "<WorkspaceKey>"
+        }
+    }
+}

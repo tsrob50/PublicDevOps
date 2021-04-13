@@ -1,0 +1,87 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+# trigger:
+# - main
+trigger: none
+pr: none
+
+variables:
+- name: hostPoolRg
+  value: "<HostPool>"
+- name: hostPoolName
+  value: "<HostPoolName>"
+- name: laWorkspaceName
+  value: "<LogAnalyticsWorkspaceName>"
+- name: laWorkspaceRg
+  value: "LogAnalyticsWorkspaceRG>"
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- task: AzureKeyVault@1
+  displayName: "Get Key Vault Vars"
+  inputs:
+    azureSubscription: 'SessionHostBuild2'
+    KeyVaultName: 'CentralKey02'
+    SecretsFilter: '*'
+    RunAsPreJob: false
+- task: AzurePowerShell@5
+  displayName: "Get Host Pool Reg Key"
+  inputs:
+    azureSubscription: 'SessionHostBuild2'
+    ScriptType: 'InlineScript'
+    Inline: |
+      $hostPoolRegKey = (Get-AzWvdRegistrationInfo -ResourceGroupName $(hostPoolRg) -HostPoolName $(hostPoolName)).token
+      if ($hostPoolRegKey -eq "") {
+         $hostPoolRegKey = (New-AzWvdRegistrationInfo -ResourceGroupName $(hostPoolRg) -HostPoolName $(hostPoolName) -ExpirationTime $((get-date).ToUniversalTime().AddDays(1).ToString('yyyy-MM-ddTHH:mm:ss.fffffffZ'))).Token
+      }
+      "##vso[task.setvariable variable=hostPoolRegKey;]$hostPoolRegKey"
+    azurePowerShellVersion: 'LatestVersion'
+- task: AzurePowerShell@5
+  displayName: "Get Log Analytics Key"
+  inputs:
+    azureSubscription: 'SessionHostBuild2'
+    ScriptType: 'InlineScript'
+    Inline: |
+      $laWorkspaceKey = (Get-AzOperationalInsightsWorkspaceSharedKey -ResourceGroupName $(laWorkspaceRg) -Name $(laWorkspaceName)).PrimarySharedKey
+      "##vso[task.setvariable variable=laWorkspaceKey;]$laWorkspaceKey"
+    azurePowerShellVersion: 'LatestVersion'
+- task: AzurePowerShell@5
+  displayName: "Set SH Prefix"
+  inputs:
+    azureSubscription: 'SessionHostBuild2'
+    ScriptType: 'InlineScript'
+    Inline: |
+      $vmPrefix = "SH" + (Get-Date -Format "MMddyyHHmm")
+      "##vso[task.setvariable variable=vmPrefix;]$vmPrefix"
+    azurePowerShellVersion: 'LatestVersion'
+- task: AzureResourceManagerTemplateDeployment@3
+  displayName: "Build Session Hosts "
+  inputs:
+    deploymentScope: 'Resource Group'
+    azureResourceManagerConnection: 'SessionHostBuild2'
+    subscriptionId: '<SubcriptionID>'
+    action: 'Create Or Update Resource Group'
+    resourceGroupName: 'ARMTestSHRG01'
+    location: 'Central US'
+    templateLocation: 'Linked artifact'
+    csmFile: 'AddVirtualMachinesTemplate.json'
+    csmParametersFile: 'AddVirtualMachinesTemplate.parameters.json'
+    overrideParameters: '-hostpoolToken $(hostPoolRegKey) -administratorAccountPassword $(domainadd) -vmAdministratorAccountPassword $(LocalAdmin) -vmNamePrefix $(vmPrefix) -workspaceKey $(laWorkspaceKey)'
+    deploymentMode: 'Incremental'
+- task: AzurePowerShell@5
+  displayName: "SH Drain Mode"
+  inputs:
+    azureSubscription: 'SessionHostBuild2'
+    ScriptType: 'InlineScript'
+    Inline: |
+      $sessionHosts = Get-AzWvdSessionHost -ResourceGroupName $(hostPoolRg) -HostPoolName $(hostPoolName) | Where-Object {$_.Name -like "*$(vmPrefix)*"}
+            foreach ($sessionHost in $sessionHosts) {
+               $sessionHost = (($sessionHost.name).Split("/"))[1]
+               Update-AzWvdSessionHost -ResourceGroupName $(hostPoolRg) -HostPoolName $(hostPoolName) -Name $sessionHost -AllowNewSession:$false 
+            }
+    azurePowerShellVersion: 'LatestVersion'
