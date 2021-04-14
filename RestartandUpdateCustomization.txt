@@ -1,0 +1,12 @@
+{
+"type": "WindowsRestart",
+"restartCommand": "shutdown /r /f /t 0",
+"restartCheckCommand": "echo Azure-Image-Builder-Restarted-the-VM  > c:\\buildArtifacts\\azureImageBuilderRestart.txt",
+"restartTimeout": "5m"
+},
+{
+"type": "WindowsUpdate",
+"searchCriteria": "IsInstalled=0",
+"filters": ["exclude:$_.Title -like '*Preview*'", "include:$true"],
+"updateLimit": 20
+}
