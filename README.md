@@ -3,6 +3,7 @@ Public repo for files related to Azure DevOps Videos
 
 # Azure DevOps and Bicep Pipelines
 Files used for Azure DevOps and Bicep Pipelines
+https://youtu.be/Q2HZdwTAWG0
 
 # Image Builder Pipeline
 Files used for Azure DevOps and Image Builder
