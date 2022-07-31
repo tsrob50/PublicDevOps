@@ -7,6 +7,7 @@ https://youtu.be/Q2HZdwTAWG0
 
 # Azure DevOps and Terraform Pipelines
 Files used for Azure DevOps and Terraform Pipelines Video
+https://youtu.be/d85-KD9stqc
 
 # Image Builder Pipeline
 Files used for Azure DevOps and Image Builder
