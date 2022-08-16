@@ -12,7 +12,7 @@ variables:
 # Get the Registration Key
 # if no key, create one for 24 hours
 $hostPoolRegKey = (Get-AzWvdRegistrationInfo -ResourceGroupName $(hostPoolRg) -HostPoolName $(hostPoolName)).token
-if ($hostPoolRegKey -eq "") {
+if ($hostPoolRegKey -eq $null) {
    $hostPoolRegKey = (New-AzWvdRegistrationInfo -ResourceGroupName $(hostPoolRg) -HostPoolName $(hostPoolName) -ExpirationTime $((get-date).ToUniversalTime().AddDays(1).ToString('yyyy-MM-ddTHH:mm:ss.fffffffZ'))).Token
 }
 "##vso[task.setvariable variable=hostPoolRegKey;]$hostPoolRegKey"
