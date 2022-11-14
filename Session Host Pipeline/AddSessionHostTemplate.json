@@ -98,13 +98,12 @@
             "defaultValue": 2,
             "allowedValues": [ 1, 2, 3 ]
         },
-        "availabilityZone": {
-            "type": "int",
+        "availabilityZones": {
+            "type": "array",
             "metadata": {
-                "description": "The number of availability zone to be used when create the VMs."
+                "description": "The availability zones to equally distribute VMs amongst"
             },
-            "defaultValue": 1,
-            "allowedValues": [ 1, 2, 3 ]
+            "defaultValue": []
         },
         "vmResourceGroup": {
             "type": "string",
@@ -136,7 +135,7 @@
         "vmNumberOfInstances": {
             "type": "int",
             "metadata": {
-                "description": "Number of session hosts that will be created and added to the host pool."
+                "description": "Number of session hosts that will be created and added to the hostpool."
             }
         },
         "vmNamePrefix": {
@@ -383,14 +382,8 @@
                     "availabilitySetName": {
                         "value": "[variables('availabilitySetName')]"
                     },
-                    "availabilityZone": {
-                        "value": "[parameters('availabilityZone')]"
-                    },
-                    "vmImageVhdUri": {
-                        "value": "[parameters('vmImageVhdUri')]"
-                    },
-                    "storageAccountResourceGroupName": {
-                        "value": "[parameters('storageAccountResourceGroupName')]"
+                    "availabilityZones": {
+                        "value": "[parameters('availabilityZones')]"
                     },
                     "vmGalleryImageOffer": {
                         "value": "[parameters('vmGalleryImageOffer')]"
