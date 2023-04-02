@@ -24,14 +24,14 @@ variable "bkstrgkey" {
 
 variable "resourcegroup_name" {
   type        = string
+  default     = "DevOps"
   description = "The name of the resource group"
-  default     = "<resource group name>"
-}
+  }
 
 variable "location" {
   type        = string
   description = "The region for the deployment"
-  default     = "<region>"
+  default     = "ukSouth"
 }
 
 variable "tags" {
